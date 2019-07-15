@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace Builder
 {
-    public interface IFluentHttpClient
+    public interface IFluentHttpClient<T>
     {
-        IFluentHttpClient WithHeaders(Dictionary<string, string> headers);
-        IFluentHttpClient WithBasicAuthentication(string tenantName, string username,
+        T WithHeaders(Dictionary<string, string> headers);
+        T WithBasicAuthentication(string tenantName, string username,
             string password);
-        IFluentHttpClient WithUrl(Uri baseUrl);
+
+        T WithUrl(Uri baseUrl);
         Task<T> Get<T>(Uri url, CancellationToken ct = default) where T : class;
         Task<List<T>> GetList<T>(Uri url, CancellationToken ct = default)
             where T : class;

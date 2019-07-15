@@ -9,11 +9,12 @@ using System.Threading.Tasks;
 
 namespace Builder
 {
-    public class OrchestratorClient : IFluentHttpClient
+    public class OrchestratorClient : IOrchestratorRequestBuilder
     {
         private readonly HttpClient _client = new HttpClient();
         private Dictionary<string, string> _headers = new Dictionary<string, string>();
         private string _tenantName, _username, _password;
+        private int _organizationUnitId;
         private Uri _baseUrl;
         private readonly Uri _loginUrl = new Uri("/api/Account/Authenticate", UriKind.Relative);
 
@@ -34,7 +35,7 @@ namespace Builder
             }
         }
 
-        public IFluentHttpClient WithHeaders(Dictionary<string, string> headers)
+        public IOrchestratorRequestBuilder WithHeaders(Dictionary<string, string> headers)
         {
             if (headers != null)
             {
@@ -46,13 +47,19 @@ namespace Builder
             return this;
         }
 
-        public IFluentHttpClient WithUrl(Uri baseUrl)
+        public IOrchestratorRequestBuilder WithUrl(Uri baseUrl)
         {
             _baseUrl = baseUrl;
             return this;
         }
 
-        public IFluentHttpClient WithBasicAuthentication(string tenantName,
+        public IOrchestratorRequestBuilder WithOrganizationUnitId(int organizationUnitId)
+        {
+            _headers["X-UIPATH-OrganizationUnitId"] = organizationUnitId.ToString();
+            return this;
+        }
+
+        public IOrchestratorRequestBuilder WithBasicAuthentication(string tenantName,
             string username, string password)
         {
             _tenantName = tenantName;

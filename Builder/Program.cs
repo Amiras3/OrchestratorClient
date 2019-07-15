@@ -14,6 +14,7 @@ namespace Builder
             };
 
             var client = new OrchestratorClient()
+                .WithOrganizationUnitId(1)
                 .WithUrl(new Uri("http://localhost:6234/"))
                 .WithBasicAuthentication("default", "admin", "890iop")
                 .WithHeaders(headers);
