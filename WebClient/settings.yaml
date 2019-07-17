@@ -1,0 +1,5 @@
+csharp: true
+sync-methods: none
+add-credentials: true
+input-file: swagger-v2.json
+namespace: WebClient

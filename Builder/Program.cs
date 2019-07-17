@@ -1,6 +1,7 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Builder
@@ -9,22 +10,22 @@ namespace Builder
     {
         public static async Task Main(string[] args)
         {
-            var headers = new Dictionary<string, string> {
-                {"Accept", "application/json"}
-            };
+            var client = new HttpClient();
+            var headers = new Dictionary<string, string>();
 
-            var client = new OrchestratorClient()
-                .WithOrganizationUnitId(1)
-                .WithUrl(new Uri("http://localhost:6234/"))
-                .WithBasicAuthentication("default", "admin", "890iop")
-                .WithHeaders(headers);
+            var orchestratorClient = new OrchestratorClient(client).
+                   WithBasicAuthentication("default", "admin", "890iop").
+                   WithUrl(new Uri("http://localhost:6234/")).
+                   WithHeaders(headers);
 
-            var result = await client.Get<ODataResponse>(new Uri("/odata/Users", UriKind.Relative));
+            var resultLogin = await orchestratorClient.LoginAsync();
+            Console.WriteLine(resultLogin.Result);
+            var response = await orchestratorClient.DownloadPackage
+                ("/odata/Processes/UiPath.Server.Configuration.OData.DownloadPackage"
+                , @"C:\Users\amir.zamfiratos\Desktop\Hello111.nupkg"
+                , "Hello:1.0.6418.26873");
 
-            foreach (var item in result.Value)
-            {
-                Console.WriteLine(item.Name);
-            }
+
         }
     }
 }
