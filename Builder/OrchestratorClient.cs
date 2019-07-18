@@ -218,7 +218,6 @@ namespace Builder
                     {
                         throw new Exception("Server Error");
                     }
-
                     using (var stream = await responseMessage.Content.ReadAsStreamAsync())
                     {
                         using (var fileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
@@ -226,7 +225,6 @@ namespace Builder
                             await stream.CopyToAsync(fileStream);
                         }
                     }
-
                     return responseMessage;
                 }
             }

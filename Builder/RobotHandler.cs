@@ -1,19 +1,16 @@
-﻿using Microsoft.Rest;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Threading;
+using System.Text;
 using System.Threading.Tasks;
+using WebClient;
 using WebClient.Models;
 
-namespace WebClient
+namespace Builder
 {
-    class Program
+    class RobotHandler
     {
         public static async Task<List<RobotDto>> CreateRobotsAsync(UiPathWebApi api, string robotName,
             string username, int numRobots, int pagination)
@@ -47,7 +44,7 @@ namespace WebClient
         }
 
 
-        public static async Task AddRobotsEnviromentAsync(UiPathWebApi api, EnvironmentDto environmentDto, 
+        public static async Task AddRobotsEnviromentAsync(UiPathWebApi api, EnvironmentDto environmentDto,
             List<RobotDto> robots, int pagination)
         {
             int numRobots = robots.Count;
@@ -67,34 +64,12 @@ namespace WebClient
         {
             var environments = await api.Environments.GetEnvironmentsAsync(expand: "Robots");
             var environmentsList = environments.Value;
-            foreach(var environment in environmentsList)
+            foreach (var environment in environmentsList)
             {
                 string fileName = $"{pathToFile}{environment.Name}.json";
                 string jsonEnvironment = JsonConvert.SerializeObject(environment);
                 File.WriteAllText(fileName, jsonEnvironment);
             }
-        }
-
-
-        public static async Task Main(string[] args)
-        {
-            ServicePointManager.DefaultConnectionLimit = 100;
-            var client = new HttpClient();
-            var api = new UiPathWebApi(new BasicAuthenticationCredentials(), client, false)
-            {
-                BaseUri = new Uri("http://localhost:6234/"),
-            };
-
-            var authResponse = await api.Account.AuthenticateAsync(new LoginModel
-            {
-                UsernameOrEmailAddress = "admin",
-                Password = "890iop",
-                TenancyName = "default",
-            }).ConfigureAwait(false);
-
-            var token = authResponse.Result as string;
-            var apiA = new UiPathWebApi(new TokenCredentials(token), client, false);
-            await GetEnvironmentsAsync(apiA, @"C:\Users\amir.zamfiratos\Desktop\");
         }
     }
 }
